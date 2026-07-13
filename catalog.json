@@ -1,0 +1,28 @@
+{
+    "version": "1",
+    "name": "Community Application Catalog",
+    "description": "Opt-in catalog of self-contained application stacks (WordPress, Nextcloud, Gitea, Immich, …) for the Insula hosting platform. Add under Applications → Repositories.",
+    "entries": [
+        "wordpress",
+        "nextcloud",
+        "jitsi",
+        "moodle-bitnami",
+        "coturn",
+        "prestashop",
+        "matomo",
+        "vaultwarden",
+        "gitea",
+        "bookstack",
+        "n8n",
+        "uptime-kuma",
+        "discourse",
+        "plausible",
+        "wiki-js",
+        "immich",
+        "rocketchat",
+        "directus",
+        "paperless-ngx",
+        "invoiceninja",
+        "dolibarr"
+    ]
+}
