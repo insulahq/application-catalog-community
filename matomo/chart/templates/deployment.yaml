@@ -35,6 +35,13 @@ spec:
           volumeMounts:
             - name: matomo-data
               mountPath: /var/www/html
+            # Force the platform trusted-proxy config via Matomo's UI-immutable
+            # common.config.ini.php so the real visitor IP is read from X-Forwarded-For
+            # (see configmap.yaml). Overlays a single file onto the config dir; read-only.
+            - name: matomo-common-config
+              mountPath: /var/www/html/config/common.config.ini.php
+              subPath: common.config.ini.php
+              readOnly: true
           resources:
             requests:
               cpu: {{ .Values.matomo.resources.requests.cpu }}
@@ -64,3 +71,9 @@ spec:
         - name: matomo-data
           persistentVolumeClaim:
             claimName: {{ include "matomo.fullname" . }}-matomo-data
+        - name: matomo-common-config
+          configMap:
+            name: {{ include "matomo.fullname" . }}-config
+            items:
+              - key: common.config.ini.php
+                path: common.config.ini.php

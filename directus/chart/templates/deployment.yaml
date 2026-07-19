@@ -55,6 +55,13 @@ spec:
                   key: admin-password
             - name: PUBLIC_URL
               value: "https://{{ .Values.domain }}"
+            # Trust the in-cluster proxy range so req.ip and the rate-limiter use the real
+            # visitor IP from X-Forwarded-For behind Traefik (the TCP peer is a Traefik pod in
+            # the 10.42.0.0/16 pod CIDR). Passed through to Express "trust proxy"; Directus
+            # casts this comma-separated list to an array of trusted subnets.
+            # If an external load balancer fronts the cluster, append its CIDR here too.
+            - name: IP_TRUST_PROXY
+              value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fd00::/8"
           volumeMounts:
             - name: directus-uploads
               mountPath: /directus/uploads

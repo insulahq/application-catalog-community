@@ -32,6 +32,13 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ include "vaultwarden.fullname" . }}-secret
+          env:
+            # Read the real visitor IP from the header Traefik sets, not the Traefik pod IP
+            # (10.42.0.0/16). Default is X-Real-IP, which Traefik populates with the single
+            # client IP (X-Forwarded-For may be a list Vaultwarden can't parse), so set it
+            # explicitly. Vaultwarden trusts the header value regardless of proxy source.
+            - name: IP_HEADER
+              value: "X-Real-IP"
           volumeMounts:
             - name: vw-data
               mountPath: /data

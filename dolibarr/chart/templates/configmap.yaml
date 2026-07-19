@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dolibarr.fullname" . }}-config
+  labels:
+    {{- include "dolibarr.labels" . | nindent 4 }}
+data:
+  # Real client IP behind the platform's in-cluster Traefik proxy.
+  # The tuxgasy/dolibarr image is php:8.2-apache (Debian). Apache's mod_remoteip
+  # ships in the base image but is NOT enabled, so REMOTE_ADDR is the Traefik POD
+  # IP (10.42.x.x, inside 10.0.0.0/8). Dolibarr's getUserRemoteIP(1) — used for
+  # security events, IP-bound sessions and audit logs — returns REMOTE_ADDR and
+  # would otherwise record the proxy IP for every visitor. Enabling mod_remoteip
+  # rewrites REMOTE_ADDR from X-Forwarded-For once the connecting proxy is trusted.
+  # Dolibarr has no env/config knob for this (upstream issue #25471), so we mount
+  # the Debian-native two-file recipe (mods-enabled/*.load + conf-enabled/*.conf).
+  remoteip.load: |
+    LoadModule remoteip_module /usr/lib/apache2/modules/mod_remoteip.so
+  remoteip.conf: |
+    RemoteIPHeader X-Forwarded-For
+    # Platform-standard trusted proxy range (RFC1918 super-set). RemoteIPInternalProxy
+    # (not TrustedProxy) walks the whole X-Forwarded-For chain, stripping every trusted
+    # hop, so the left-most non-trusted address (the real visitor) becomes REMOTE_ADDR.
+    RemoteIPInternalProxy 10.0.0.0/8
+    RemoteIPInternalProxy 172.16.0.0/12
+    RemoteIPInternalProxy 192.168.0.0/16
+    RemoteIPInternalProxy 127.0.0.0/8
+    RemoteIPInternalProxy 169.254.0.0/16
+    RemoteIPInternalProxy fd00::/8
+    # If an EXTERNAL load balancer sits in front of the cluster, add its source CIDR
+    # here as an extra RemoteIPInternalProxy line (do not hardcode a specific LB IP).

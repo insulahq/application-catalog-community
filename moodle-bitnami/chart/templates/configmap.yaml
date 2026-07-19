@@ -14,4 +14,8 @@ data:
   PHP_MAX_UPLOAD_SIZE: {{ .Values.moodle.phpMaxUploadSize | quote }}
   BITNAMI_DEBUG: "false"
   MOODLE_SSLPROXY: "true"
+  # Enable reverse-proxy support so Moodle trusts the X-Forwarded-* headers Traefik sets
+  # (real visitor IP and correct external URLs) instead of the Traefik pod IP (10.42.0.0/16).
+  # TLS/proxy termination is in-cluster (Traefik); bitnami uses yes/no here.
+  MOODLE_REVERSEPROXY: "yes"
   MOODLE_HOST: {{ .Values.ingress.domain | quote }}

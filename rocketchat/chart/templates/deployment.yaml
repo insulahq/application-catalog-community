@@ -35,6 +35,15 @@ spec:
             - configMapRef:
                 name: {{ include "rocketchat.fullname" . }}-config
                 optional: true
+          env:
+            # Behind the platform Traefik ingress the TCP peer is a Traefik pod IP
+            # (10.42.x.x). Tell Rocket.Chat how many reverse proxies sit in front so it
+            # reads the real visitor IP from X-Forwarded-For / X-Real-IP instead of the
+            # pod IP (used for rate-limiting and audit logs). One hop = Traefik.
+            # If an external load balancer is added in front, increase this to match the
+            # total number of trusted proxies in the chain.
+            - name: HTTP_FORWARDED_COUNT
+              value: "1"
           volumeMounts:
             - name: rc-uploads
               mountPath: /app/uploads

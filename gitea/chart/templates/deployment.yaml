@@ -54,6 +54,12 @@ spec:
               value: "22"
             - name: GITEA__server__LFS_START_SERVER
               value: {{ .Values.gitea.lfsEnabled | quote }}
+            # Trust the in-cluster proxy range so Gitea reads the real visitor IP from
+            # X-Forwarded-For behind Traefik (the TCP peer is a Traefik pod in the 10.42.0.0/16
+            # pod CIDR). Comma-separated CIDRs (Gitea security.REVERSE_PROXY_TRUSTED_PROXIES).
+            # If an external load balancer fronts the cluster, append its CIDR here too.
+            - name: GITEA__security__REVERSE_PROXY_TRUSTED_PROXIES
+              value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fd00::/8"
           volumeMounts:
             - name: gitea-data
               mountPath: /data

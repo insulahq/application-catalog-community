@@ -43,6 +43,13 @@ spec:
               value: {{ .Values.mariadb.database | quote }}
             - name: DB_USERNAME
               value: {{ .Values.mariadb.user | quote }}
+            # Trust the in-cluster proxy range so BookStack reads the real visitor IP from
+            # X-Forwarded-For behind Traefik (the TCP peer is a Traefik pod in the 10.42.0.0/16
+            # pod CIDR). Comma-separated CIDRs (BookStack APP_PROXIES .env key); the
+            # linuxserver image runs php-fpm with clear_env=no, so this container env reaches
+            # the app. If an external load balancer fronts the cluster, append its CIDR too.
+            - name: APP_PROXIES
+              value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fd00::/8"
           volumeMounts:
             - name: bookstack-data
               mountPath: /config

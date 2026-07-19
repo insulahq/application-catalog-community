@@ -28,6 +28,14 @@ spec:
           env:
             - name: APP_URL
               value: {{ .Values.app.url | quote }}
+            # Behind the platform Traefik ingress the TCP peer is an in-cluster proxy pod
+            # IP (k3s pod CIDR 10.42.0.0/16, inside 10.0.0.0/8). Trust the RFC1918 super-set
+            # so Laravel's TrustProxies middleware honours X-Forwarded-For/-Proto and records
+            # the real client IP + correct https scheme instead of the pod IP. Symfony
+            # IpUtils supports CIDR; the value is split on commas. Add an external load
+            # balancer's CIDR here too if one fronts the cluster (do not hardcode an LB IP).
+            - name: TRUSTED_PROXIES
+              value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fd00::/8"
             - name: APP_KEY
               valueFrom:
                 secretKeyRef:

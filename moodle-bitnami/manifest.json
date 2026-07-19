@@ -215,7 +215,7 @@
             "MOODLE_SITENAME": "Moodle",
             "SITE_URL": "http://localhost:8080",
             "SSLPROXY": "true",
-            "REVERSEPROXY": "false",
+            "REVERSEPROXY": "true",
             "AUTO_UPDATE_MOODLE": "true",
             "RUN_CRON_TASKS": "true"
         },

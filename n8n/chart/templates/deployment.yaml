@@ -51,6 +51,12 @@ spec:
               value: "https"
             - name: N8N_HOST
               value: {{ .Values.ingress.domain | quote }}
+            # Tell n8n (Express) how many reverse proxies sit in front so it trusts
+            # X-Forwarded-For and logs/rate-limits on the real visitor IP instead of the
+            # Traefik pod IP (10.42.0.0/16). 1 = Traefik only; set 2 if an external load
+            # balancer also fronts the cluster.
+            - name: N8N_PROXY_HOPS
+              value: "1"
           volumeMounts:
             - name: n8n-data
               mountPath: /home/node/.n8n

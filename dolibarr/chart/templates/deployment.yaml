@@ -50,6 +50,16 @@ spec:
               mountPath: /var/www/html/documents
             - name: custom
               mountPath: /var/www/html/custom
+            # Enable Apache mod_remoteip so REMOTE_ADDR / Dolibarr's trusted client IP
+            # reflect the real visitor (X-Forwarded-For) instead of the Traefik pod IP.
+            - name: apache-remoteip
+              mountPath: /etc/apache2/mods-enabled/remoteip.load
+              subPath: remoteip.load
+              readOnly: true
+            - name: apache-remoteip
+              mountPath: /etc/apache2/conf-enabled/remoteip.conf
+              subPath: remoteip.conf
+              readOnly: true
           resources:
             requests:
               cpu: {{ .Values.dolibarr.resources.requests.cpu }}
@@ -82,3 +92,11 @@ spec:
         - name: custom
           persistentVolumeClaim:
             claimName: {{ include "dolibarr.fullname" . }}-custom
+        - name: apache-remoteip
+          configMap:
+            name: {{ include "dolibarr.fullname" . }}-config
+            items:
+              - key: remoteip.load
+                path: remoteip.load
+              - key: remoteip.conf
+                path: remoteip.conf

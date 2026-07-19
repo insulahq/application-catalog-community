@@ -124,6 +124,12 @@ spec:
               value: "https://{{ .Values.ingress.domain }}"
             - name: APACHE_BODY_LIMIT
               value: "0"
+            # Trust the in-cluster proxy range so Nextcloud reads the real visitor IP from
+            # X-Forwarded-For/X-Real-IP behind Traefik (the TCP peer is a Traefik pod in the
+            # 10.42.0.0/16 pod CIDR). Space-separated CIDRs (per nextcloud/docker docs).
+            # If an external load balancer fronts the cluster, append its CIDR here too.
+            - name: TRUSTED_PROXIES
+              value: "10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 fd00::/8"
           volumeMounts:
             - name: nextcloud-data
               mountPath: /var/www/html/data

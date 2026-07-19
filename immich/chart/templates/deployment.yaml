@@ -35,6 +35,17 @@ spec:
             - configMapRef:
                 name: {{ include "immich.fullname" . }}-config
                 optional: true
+          env:
+            # Behind the platform Traefik ingress the TCP peer is a Traefik pod IP
+            # (k3s pod CIDR 10.42.0.0/16, inside 10.0.0.0/8). Set Immich's Express
+            # "trust proxy" list to the RFC1918 super-set so it reads the real visitor IP
+            # from X-Forwarded-For instead of the pod IP. Immich already defaults to
+            # trusting Express's "uniquelocal"/"linklocal" presets (which cover private
+            # ranges); this makes the trusted range explicit and auditable. Values accept
+            # CIDR ranges (dual-stack). Add an external load balancer's CIDR here if one
+            # fronts the cluster (do not hardcode an LB IP).
+            - name: IMMICH_TRUSTED_PROXIES
+              value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fd00::/8"
           volumeMounts:
             - name: upload-data
               mountPath: /usr/src/app/upload
