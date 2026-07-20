@@ -19,9 +19,9 @@ https://github.com/insulahq/application-catalog-community
 
 ## What's here
 
-`wordpress`, `nextcloud`, `jitsi`, `moodle-bitnami`, `coturn`, `prestashop`, `matomo`,
+`wordpress`, `nextcloud`, `jitsi`, `moodle-bitnami`, `coturn`, `prestashop`,
 `vaultwarden`, `gitea`, `bookstack`, `n8n`, `uptime-kuma`, `discourse`, `plausible`, `wiki-js`,
-`immich`, `rocketchat`, `directus`, `paperless-ngx`, `invoiceninja`, `dolibarr`.
+`immich`, `rocketchat`, `directus`, `paperless-ngx`, `invoiceninja`.
 
 ## Images
 

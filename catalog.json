@@ -9,7 +9,6 @@
         "moodle-bitnami",
         "coturn",
         "prestashop",
-        "matomo",
         "vaultwarden",
         "gitea",
         "bookstack",
@@ -22,7 +21,6 @@
         "rocketchat",
         "directus",
         "paperless-ngx",
-        "invoiceninja",
-        "dolibarr"
+        "invoiceninja"
     ]
 }
