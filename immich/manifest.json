@@ -232,7 +232,8 @@
             "DB_USERNAME": "immich",
             "DB_PASSWORD": "{{ENV:POSTGRES_PASSWORD}}",
             "REDIS_HOSTNAME": "{{SERVICE:redis}}",
-            "REDIS_PORT": "6379"
+            "REDIS_PORT": "6379",
+            "IMMICH_TRUSTED_PROXIES": "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fd00::/8"
         },
         "configurable": [
             "LOG_LEVEL"

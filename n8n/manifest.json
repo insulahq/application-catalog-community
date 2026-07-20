@@ -215,7 +215,8 @@
             "DB_POSTGRESDB_PORT": "5432",
             "DB_POSTGRESDB_DATABASE": "n8n",
             "DB_POSTGRESDB_USER": "n8n",
-            "DB_POSTGRESDB_PASSWORD": "{{ENV:POSTGRES_PASSWORD}}"
+            "DB_POSTGRESDB_PASSWORD": "{{ENV:POSTGRES_PASSWORD}}",
+            "N8N_PROXY_HOPS": "1"
         },
         "configurable": [
             "N8N_SECURE_COOKIE",

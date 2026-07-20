@@ -143,5 +143,10 @@
             ],
             "isDefault": true
         }
-    ]
+    ],
+    "env_vars": {
+        "fixed": {
+            "IP_HEADER": "X-Real-IP"
+        }
+    }
 }

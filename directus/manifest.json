@@ -192,7 +192,8 @@
             "DB_USER": "directus",
             "DB_PASSWORD": "{{ENV:POSTGRES_PASSWORD}}",
             "KEY": "{{ENV:DIRECTUS_KEY}}",
-            "SECRET": "{{ENV:DIRECTUS_SECRET}}"
+            "SECRET": "{{ENV:DIRECTUS_SECRET}}",
+            "IP_TRUST_PROXY": "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fd00::/8"
         },
         "configurable": [
             "ADMIN_EMAIL",

@@ -205,7 +205,8 @@
             "MONGO_OPLOG_URL": "mongodb://{{SERVICE:mongodb}}:27017/local?replicaSet=rs0",
             "NODE_OPTIONS": "--max-old-space-size=768",
             "DEPLOY_METHOD": "docker",
-            "OVERWRITE_SETTING_Show_Setup_Wizard": "pending"
+            "OVERWRITE_SETTING_Show_Setup_Wizard": "pending",
+            "HTTP_FORWARDED_COUNT": "1"
         },
         "configurable": [
             "ROOT_URL"

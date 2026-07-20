@@ -251,7 +251,8 @@
             "REQUIRE_HTTPS": "false",
             "APP_CIPHER": "AES-256-CBC",
             "IN_USER_EMAIL": "admin@example.com",
-            "FPM_HOST": "{{SERVICE:invoiceninja}}"
+            "FPM_HOST": "{{SERVICE:invoiceninja}}",
+            "TRUSTED_PROXIES": "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,fd00::/8"
         },
         "configurable": [
             "APP_URL",

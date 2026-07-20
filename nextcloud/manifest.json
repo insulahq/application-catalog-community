@@ -316,7 +316,8 @@
             "MYSQL_DATABASE": "nextcloud",
             "MYSQL_USER": "nextcloud",
             "MYSQL_PASSWORD": "{{ENV:NEXTCLOUD_DB_PASSWORD}}",
-            "REDIS_HOST": "{{SERVICE:redis}}"
+            "REDIS_HOST": "{{SERVICE:redis}}",
+            "TRUSTED_PROXIES": "10.0.0.0/8 172.16.0.0/12 192.168.0.0/16 fd00::/8"
         },
         "configurable": [
             "NEXTCLOUD_ADMIN_USER",
