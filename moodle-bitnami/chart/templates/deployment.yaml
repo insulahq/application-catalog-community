@@ -11,19 +11,16 @@ spec:
     matchLabels:
       {{- include "moodle-bitnami.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: moodle
+  # moodledata is a ReadWriteOnce PVC, so a second pod cannot mount it during a
+  # rolling update — recreate the old pod before starting the new one.
   strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
+    type: Recreate
   template:
     metadata:
       labels:
         {{- include "moodle-bitnami.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: moodle
     spec:
-      securityContext:
-        fsGroup: 1001
       containers:
         - name: moodle
           image: {{ .Values.moodle.image }}
@@ -31,16 +28,65 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
-          envFrom:
-            - secretRef:
-                name: {{ include "moodle-bitnami.fullname" . }}-secret
-            - configMapRef:
-                name: {{ include "moodle-bitnami.fullname" . }}-config
+          env:
+            # PostgreSQL connection (erseco reads the DB_* set; POSTGRES_* mirror the
+            # manifest env_vars so the app and DB share one source of truth).
+            - name: POSTGRES_DB
+              value: {{ .Values.postgresql.database | quote }}
+            - name: POSTGRES_USER
+              value: {{ .Values.postgresql.user | quote }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "moodle-bitnami.fullname" . }}-secret
+                  key: postgres-password
+            - name: DB_TYPE
+              value: "pgsql"
+            - name: DB_HOST
+              value: {{ include "moodle-bitnami.fullname" . }}-postgresql
+            - name: DB_PORT
+              value: {{ .Values.postgresql.port | quote }}
+            - name: DB_NAME
+              value: {{ .Values.postgresql.database | quote }}
+            - name: DB_USER
+              value: {{ .Values.postgresql.user | quote }}
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "moodle-bitnami.fullname" . }}-secret
+                  key: postgres-password
+            # Site admin + identity
+            - name: MOODLE_USERNAME
+              value: {{ .Values.moodle.username | quote }}
+            - name: MOODLE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "moodle-bitnami.fullname" . }}-secret
+                  key: moodle-password
+            - name: MOODLE_EMAIL
+              value: {{ .Values.moodle.email | quote }}
+            - name: MOODLE_SITENAME
+              value: {{ .Values.moodle.siteName | quote }}
+            - name: SITE_URL
+              value: {{ if .Values.ingress.domain }}{{ printf "https://%s" .Values.ingress.domain | quote }}{{ else }}{{ .Values.moodle.siteUrl | quote }}{{ end }}
+            # Reverse-proxy awareness: TLS is terminated in-cluster (Traefik/nginx ingress),
+            # and the TCP peer erseco sees is an ingress pod, not the visitor. SSLPROXY=true
+            # tells Moodle its external scheme is https; REVERSEPROXY=true makes the bundled
+            # nginx honor X-Forwarded-For / X-Forwarded-Proto so Moodle logs the real client
+            # IP and builds correct absolute URLs instead of using the proxy pod IP.
+            - name: SSLPROXY
+              value: "true"
+            - name: REVERSEPROXY
+              value: "true"
+            # erseco applies pending Moodle upgrades on boot and runs the Moodle cron loop
+            # inside this container, so no separate upgrade step or CronJob is needed.
+            - name: AUTO_UPDATE_MOODLE
+              value: "true"
+            - name: RUN_CRON_TASKS
+              value: "true"
           volumeMounts:
-            - name: moodle-data
-              mountPath: /bitnami/moodle
             - name: moodledata
-              mountPath: /bitnami/moodledata
+              mountPath: /var/www/moodledata
           resources:
             requests:
               cpu: {{ .Values.moodle.resources.requests.cpu }}
@@ -64,13 +110,7 @@ spec:
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
-          securityContext:
-            runAsUser: 1001
-            runAsNonRoot: true
       volumes:
-        - name: moodle-data
-          persistentVolumeClaim:
-            claimName: {{ include "moodle-bitnami.fullname" . }}-moodle-data
         - name: moodledata
           persistentVolumeClaim:
             claimName: {{ include "moodle-bitnami.fullname" . }}-moodledata
