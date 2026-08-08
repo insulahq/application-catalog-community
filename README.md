@@ -41,6 +41,14 @@ schema/           # manifest JSON schema (shared with the official catalog)
 scripts/          # validate / format tooling
 ```
 
+## Real client IP
+
+Apps are reached through the platform's Traefik pod, so the TCP peer is a pod
+address and the visitor's address (v4 or v6) arrives in `X-Forwarded-For` /
+`X-Real-Ip`. Most entries are configured for this in their `manifest.json`;
+a few need an action inside the app instead. Per-app status, the shared trust
+list, and why `*` is never the answer: [REAL_CLIENT_IP.md](REAL_CLIENT_IP.md).
+
 ## Validate
 
 ```bash
