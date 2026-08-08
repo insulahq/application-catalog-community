@@ -249,7 +249,8 @@
             "PAPERLESS_DBNAME": "paperless",
             "PAPERLESS_DBUSER": "paperless",
             "PAPERLESS_DBPASS": "{{ENV:POSTGRES_PASSWORD}}",
-            "PAPERLESS_REDIS": "redis://{{SERVICE:redis}}:6379"
+            "PAPERLESS_REDIS": "redis://{{SERVICE:redis}}:6379",
+            "PAPERLESS_ALLAUTH_TRUSTED_CLIENT_IP_HEADER": "X-Real-IP"
         },
         "configurable": [
             "PAPERLESS_ADMIN_USER",
