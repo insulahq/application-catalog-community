@@ -1,8 +1,0 @@
-apiVersion: v2
-name: moodle-bitnami
-description: Moodle LMS packaged on erseco/alpine-moodle (Alpine + PHP 8.3 + nginx) with PostgreSQL
-type: application
-# Chart 2.x re-platforms Moodle onto erseco/alpine-moodle + PostgreSQL, replacing the prior
-# packaged stack (breaking backend change) — see manifest.json, authoritative for the platform.
-version: 2.0.0
-appVersion: "5.2.0"
